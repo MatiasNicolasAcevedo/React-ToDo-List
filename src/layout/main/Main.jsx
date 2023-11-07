@@ -1,8 +1,9 @@
-import { Button, Container, Form, ListGroup, ListGroupItem,  } from "react-bootstrap";
+import { Button, Container, Form, ListGroup } from "react-bootstrap";
 import './Main';
 import { useState } from "react";
+import TodoItem from "../../components/TodoItem/TodoItem";
 
-const TODOS = [
+/* const TODOS = [
     {
         text: 'Instalar NodeJS',
         status: false,
@@ -10,7 +11,7 @@ const TODOS = [
     },
     {
         text: 'Crear proyecto con vite@latest',
-        status: false,
+        status: true,
         id: 2,
     },
     {
@@ -18,14 +19,20 @@ const TODOS = [
         status: false,
         id: 3,
     }
-];
+]; */
+const TODOS = JSON.parse(localStorage.getItem('todos')) || [];
 
 function Main () {
     const [ todos, setTodos ] = useState(TODOS);
-    
+
+    function updateLocalStorage() {
+        localStorage.setItem('todos', JSON.stringify(todos));
+    }
+
     function handleSubmit(event) {
         event.preventDefault();
-        const text = event.target.elements.text.value;
+        const input = event.target.elements.text;
+        const text = input.value;
         const todo = {
             text,
             status: false,
@@ -33,6 +40,22 @@ function Main () {
         } 
         const newTodos = [...todos, todo];
         setTodos(newTodos);
+        input.value= '';
+        input.focus();
+        updateLocalStorage();
+    }
+
+    function handleTodoDelete(id) {
+        const newArray = todos.filter(todo => todo.id != id);
+        setTodos(newArray);
+        updateLocalStorage();
+    }
+
+    function handleTodoStatus(id) {
+        const todo = todos.find(todo => todo.id == id);
+        todo.status = true;
+        setTodos([...todos]);
+        updateLocalStorage();
     }
 
     return (
@@ -55,17 +78,7 @@ function Main () {
                 <ListGroup as="ol">
                     {todos.map((todo) => {
                         return (
-                            <ListGroupItem className="d-flex gap-2" key={todo.id}>
-                                <div className="w-100">
-                                    {todo.text}
-                                </div>
-                                <Button className="btn-success" size="sm">
-                                    <i className="fa-solid fa-check"></i>
-                                </Button>
-                                <Button className="btn-danger" size="sm">
-                                    <i className="fa-solid fa-trash"></i>
-                                </Button>
-                            </ListGroupItem>
+                            <TodoItem tarea={todo} key={todo.id} fnDelete={handleTodoDelete} fnStatusChange={handleTodoStatus} />
                         )
                     })}
                 </ListGroup>
