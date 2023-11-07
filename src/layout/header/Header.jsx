@@ -5,7 +5,7 @@ function Header() {
         <>
             <Navbar expand="lg" className="bg-primary" data-bs-theme="dark">
                 <Container>
-                    <Navbar.Brand>React rodo</Navbar.Brand>
+                    <Navbar.Brand>React todo</Navbar.Brand>
                 </Container>
             </Navbar>
         </>
